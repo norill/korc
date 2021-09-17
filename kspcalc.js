@@ -155,6 +155,12 @@ var KSP = {
 			) * (stage.multiplier || 1);
 		},
 		
+		tankCount : function (stage) {
+			return (
+				((stage.lfoTanks || 0).length || 0)
+			) * (stage.multiplier || 1);
+		},
+		
 		//Cost of this stage only
 		cost : function (stage) {
 			return (
@@ -586,6 +592,15 @@ function findOptimalStage(args) {
 								//too many parts, try something different
 								if (sc === stackMultiplier) {
 									continue nextBranch;
+								} else {
+									break;
+								}
+							}
+							
+							if (args.maxTanks !== Infinity && KSP.Stage.tankCount(stage) > args.maxTanks * stage.multiplier) {
+								if (sc === stackMultiplier) {
+									stage.lfoTanks.pop();
+									continue nextTank;
 								} else {
 									break;
 								}

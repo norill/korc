@@ -245,6 +245,7 @@ function SettingsController($scope) {
 	$scope.maxPartCount;
 	$scope.maxStages = 3;
 	$scope.maxStacks = 4;
+	$scope.maxTanks = 5;
 	$scope.cluster = false;
 	$scope.parallel = false;
 	$scope.asparagus = false;
@@ -406,6 +407,7 @@ function SettingsController($scope) {
 			maxPartCount : $scope.maxPartCount,
 			atm : ($scope.atmosphere ? 1 : 0),
 			maxStacks : ($scope.lastStageSingle ? 1 : $scope.maxStacks),
+			maxTanks : $scope.maxTanks,
 			cluster : $scope.cluster,
 			parallel : false,
 			asparagus : false,
@@ -470,6 +472,8 @@ function SettingsController($scope) {
 			$scope.cluster = false; 
 			$scope.asparagus = false;
 		}
+	};
+	$scope.onMaxTanksChange = function () {
 	};
 	$scope.onAsparagusChange = function () {
 		if ($scope.asparagus) $scope.maxStages = Math.max($scope.maxStages, 2);
@@ -662,6 +666,13 @@ function SettingsController($scope) {
 							</div>
 						</div>
 						
+						<div class="form-group">
+							<label for="settingsMaxTanks" class="control-label col-sm-5">Maximum # of Tanks per Stage</label>
+							<div class="col-sm-7">
+								<input type="number" name="maxTanks" min="1" step="1" max="50" placeholder="1" id="settingsMaxTanks" class="form-control" ng-model="maxTanks" ng-change="onMaxTanksChange()"/>
+							</div>
+						</div>
+
 						<div class="form-group">
 							<label class="control-label col-sm-5">Staging Setup</label>
 							<div class="col-sm-7">
