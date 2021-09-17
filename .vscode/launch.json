@@ -1,0 +1,17 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}\\part_parser\\index.js",
+            "args": ["n:\\SteamLibrary\\steamapps\\common\\Kerbal Space Program\\GameData\\Squad", "n:\\SteamLibrary\\steamapps\\common\\Kerbal Space Program\\GameData\\Squad\\Localization\\dictionary.cfg"]
+            //"args": ["n:\\SteamLibrary\\steamapps\\common\\Kerbal Space Program\\GameData\\NearFutureLaunchVehicles\\Parts", "n:\\SteamLibrary\\steamapps\\common\\Kerbal Space Program\\GameData\\NearFutureLaunchVehicles\\Localization\\en-us.cfg"
+        }
+    ]
+}

@@ -2,6 +2,16 @@
   var trim = function (str) {
     return str.replace(/\s+$/, "");
   };
+  var trimall = function(str) {
+  	return str.replace(/\s+$/, "").replace(/\s+/, "");
+  };
+    var trimex = function (str) {
+    var n = str.lastIndexOf("=");
+    if (n > 0) {
+    	return str.substr(n+1);
+    }
+    return str.replace(/#autoLOC_[0-9]+/, "");
+  };
   
   var $garbage = [];
 }
@@ -19,9 +29,15 @@ COMMENT = "//" [^\n]+ { return; }
 NIL = (WS / LF / COMMENT)* { return; }
 
 ANY = text:[^\n]+ { return trim(text.join("")); }
-VAR = text:[0-9A-Za-z_,]+ { return text.join(""); }
+VAR = text:[#0-9A-Za-z_,-]+ { return text.join(""); }
 SLASH = text:("/" !"/") { return "/"; }
 VALUE = text:([^\n/] / SLASH)+ { return trim(text.join("")); }
+VALUE2 = text:[^\n]+ { return trimall(trimex(text.join(""))); }
+
+THETITLE = NIL "title" WS* "=" WS* value:VALUE2?
+{
+  return ["title", value];
+}
 
 VARIABLE = NIL name:VAR WS* "=" WS* value:VALUE? NIL
 {

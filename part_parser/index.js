@@ -3,7 +3,8 @@ var pathUtil = require("path");
 var partParser = require("./part_parser");
 var jsonPath = require("../lib/jsonpath").jsonPath;
 
-var partDir = process.argv[process.argv.length-1];
+var partDir = process.argv[process.argv.length-2];
+var dictionary = process.argv[process.argv.length-1];
 
 var TYPES = {
 	UNKNOWN:0,
@@ -60,6 +61,10 @@ function last(arr, defaultValue) {
 	return defaultValue;
 }
 
+var dict = parseFile(dictionary);
+//console.error(dict.Localization[0]['en-us'][0]['#autoLOC_9990057'][0]);
+//return;
+
 var results = [];
 findFiles(partDir).map(parseFile).forEach(function (fileParts) {
 	var parts = fileParts.PART;
@@ -72,6 +77,12 @@ findFiles(partDir).map(parseFile).forEach(function (fileParts) {
 				cost : part.cost ? parseInt(part.cost[part.cost.length-1]) : 0, 
 				mass : part.mass ? parseFloat(part.mass[part.mass.length-1]) : 0
 			};
+			if (result.name.startsWith('#')) {
+				result.name = dict.Localization[0]['en-us'][0][result.name][0];
+			}
+		
+				
+			
 			
 			//Determine if part is radially attached
 			var radial = false;
@@ -101,7 +112,7 @@ findFiles(partDir).map(parseFile).forEach(function (fileParts) {
 				
 				var isps = moduleEngines.atmosphereCurve[moduleEngines.atmosphereCurve.length-1].key;
 				isps.forEach(function (isp) {
-					var split = /^([01]) (\d+)$/.exec(isp);
+					var split = /^(\d+) (\d+)/.exec(isp);
 					if (split) {
 						if (split[1] === "0") {
 							result.isp_vac = parseInt(split[2]);
@@ -112,6 +123,7 @@ findFiles(partDir).map(parseFile).forEach(function (fileParts) {
 						}
 					}
 				});
+				result.name += " (ISP ATM/VAC: " + result.isp_atm + "/" + result.isp_vac +")";
 				
 				//Change thrust to use vacuum again
 				//FIXME: Change thrust calculations in kspcalc instead
@@ -205,9 +217,12 @@ findFiles(partDir).map(parseFile).forEach(function (fileParts) {
 			}
 			
 			//Remove useless parts
-			if (result.name === "Launch Escape System" || /Mk[123] |C7 Brand|Service Bay/.test(result.name)) result.type = "TYPES.UNKNOWN";
+			if (result.name === "Launch Escape System" || /Adapter|C7 Brand|Service Bay|Cargo Bay|MPO/.test(result.name)) result.type = "TYPES.UNKNOWN";
 			
-			results.push(result);
+
+			if (results.map(e => e.name).indexOf(result.name) < 0) {
+				results.push(result);
+			}
 		});
 	}
 });
@@ -221,16 +236,16 @@ function partFilterByType(type, part) {
 }
 
 function prettyPrint(parts) {
-	return JSON.stringify(parts.sort(partSort)).replace(/"(TYPES\.[A-Z_]+)"/g, "$1").replace(/\},\{/g, "},\n{");
+	return JSON.stringify(parts.sort(partSort)).replace(/"(TYPES\.[A-Z_]+)"/g, "$1").replace(/\},\{/g, "},\n{").replace("[","").replace("]","")+",";
 }
 
-console.log("LF/O Engines:");
+console.log("//LF/O Engines:");
 console.log(prettyPrint(results.filter(partFilterByType.bind(this,"TYPES.LFO_ENGINE"))));
-console.log("LF/O Tanks:");
+console.log("//LF/O Tanks:");
 console.log(prettyPrint(results.filter(partFilterByType.bind(this,"TYPES.LFO_TANK"))));
-console.log("Boosters:");
+console.log("//Boosters:");
 console.log(prettyPrint(results.filter(partFilterByType.bind(this,"TYPES.BOOSTER"))));
-console.log("Decouplers:");
+console.log("//Decouplers:");
 console.log(prettyPrint(results.filter(partFilterByType.bind(this,"TYPES.DECOUPLER"))));
-console.log("Branches:");
+console.log("//Branches:");
 console.log(prettyPrint(results.filter(partFilterByType.bind(this,"TYPES.BRANCH"))));
