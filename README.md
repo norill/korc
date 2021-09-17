@@ -42,17 +42,11 @@ If you are getting wildly different numbers in Kerbal Engineer, it's likely that
 * Optimize by X per Delta-V
 * Restrict SRBs to the first stage(s)
 
-## Support This Project
-
-Find this tool useful? Like to see it continually supported?
-
-I am a self-employed software developer who built this in my free time. 
-Unfortunately, I can't work on stuff like this all the time as I have to make money to eat and live. 
-With your support, I can continue working on this and other great tools for Kerbal Space Program that everyone can benefit from!
-
-Please click the "Donate" link on the web app to support this project! Thanks!
-
 ## License
+
+Modified by Markus Jungnickel 2021
+
+### Original License
 
 Copyright (c) 2013, Gary Court
 All rights reserved.
