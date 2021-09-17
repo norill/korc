@@ -472,7 +472,36 @@ function findOptimalStage(args) {
 	var bestStage = null;
 	var stage = null;
 	//parallel stages must have two stacks, or the same # of stacks (if greater) as the next stage (simplifies design)
-	var stackMultiplier = Math.max((args.next.multiplier || 1), ((args.parallel || (args.next.lfoEngines && (args.next.lfoEngines.length > 1 || (args.next.lfoEngines[0] || 0).last)) || (args.next.boosters && (args.next.boosters.length > 1 || (args.next.boosters[0] || 0).last))) ? 2 : 1));
+
+	var nextMultiplier = args.next.multiplier || 1;
+	var argsParallel = args.parallel;
+	var nextStageHasEnginePlate = false;
+	
+	// checking multiple engines of next stage, if a engine plate is included, we can remain on multiplier == 1
+	var nextMultipleLfoEngines = false;
+	if (args.next && args.next.lfoEngines) {
+		if (args.next.lfoEngines.length > 1 && args.next.branches) {
+			nextEnginePlates = args.next.branches.filter(function (branch) {
+				return branch.name.includes("Engine Plate");
+			});
+			
+			if (nextEnginePlates.length > 0) {
+				nextMultipleLfoEngines = false;
+				nextStageHasEnginePlate = true;
+			} else {
+				nextMultipleLfoEngines = true;
+			}
+		} else {
+			nextMultipleLfoEngines = false;
+		}
+	}
+
+	var nextLastLfoEngine = args.next.lfoEngines && (args.next.lfoEngines[0] || 0).last;
+	var nextMultipleBoosters = (args.next.boosters && (args.next.boosters.length > 1));
+	var nextLastBooster = args.next.boosters && (args.next.boosters[0] || 0).last;
+	var stackMultiplier = Math.max(nextMultiplier, (argsParallel || nextMultipleLfoEngines || nextLastLfoEngine || nextMultipleBoosters || nextLastBooster) ? 2 : 1);
+	
+	
 	var bestStackDecoupler, bestRadialDecoupler;
 	
 	//
@@ -580,7 +609,11 @@ function findOptimalStage(args) {
 							//add decouplers
 							if (args.decoupling) {
 								if (stage.multiplier === 1) {
-									if (bestStackDecoupler) stage.decouplers = [ bestStackDecoupler ];
+									if (nextStageHasEnginePlate) {
+										// we need no decoupler
+									} else if (bestStackDecoupler) {
+										stage.decouplers = [ bestStackDecoupler ];
+									}
 								} else {
 									if (bestRadialDecoupler) {
 										stage.decouplers = [ bestRadialDecoupler ];
