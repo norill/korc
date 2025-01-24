@@ -170,7 +170,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
-	<script src="kspcalc.js"></script>
+	<script type="text/javascript" src="types.js"></script>
+	<script type="text/javascript" src="parts.js"></script>
+	<script type="text/javascript" src="kspcalc.js"></script>
 	<script type="text/javascript">
 	
 function sortParts(parts, optimization) {
@@ -193,7 +195,7 @@ function sortParts(parts, optimization) {
 		lfoEngines : _.sortBy(types[TYPES.LFO_ENGINE], descending),
 		lfoTanks : _.sortBy(types[TYPES.LFO_TANK], descending_fuelmass),
 		boosters : _.sortBy(types[TYPES.BOOSTER], descending),
-		stackDecouplers : _.sortBy(_.where(types[TYPES.DECOUPLER], {radial:undefined}), ascending),
+		stackDecouplers : _.sortBy(_.where(types[TYPES.DECOUPLER], {radial:false}), ascending),
 		radialDecouplers : _.sortBy(_.where(types[TYPES.DECOUPLER], {radial:true}), ascending),
 		branches : types[TYPES.BRANCH]
 	}
@@ -440,7 +442,7 @@ function SettingsController($scope) {
 		}
 	};
 	$scope.onMaxStacksChange = function () {
-		if ($scope.maxStacks <= 1) {
+		if ($scope.maxStacks < 1) {
 			$scope.cluster = false;
 			$scope.asparagus = false;
 		}
@@ -524,7 +526,7 @@ function SettingsController($scope) {
 <body>
 	<div class="container">
 		<div class="page-header">
-			<h1>KSP Optimal Rocket Calculator <small>for Kerbal Space Program 1.2</small></h1>
+			<h1>KSP Optimal Rocket Calculator <small>for Kerbal Space Program 1.12.2</small></h1>
 		</div>
 		
 		<div ng-controller="SettingsController">
@@ -651,7 +653,7 @@ function SettingsController($scope) {
 							<div class="col-sm-7">
 								<div class="checkbox">
 									<label>
-										<input type="checkbox" name="cluster" id="settingsCluster" ng-model="cluster" ng-disabled="maxStacks <= 1"/>
+										<input type="checkbox" name="cluster" id="settingsCluster" ng-model="cluster" ng-disabled="maxStacks < 1"/>
 										Engine clustering
 									</label>
 								</div>
